@@ -27,3 +27,5 @@ target/
 ### Liquibase — local credentials (copy from *.example files, never commit real credentials) ###
 src/main/resources/liquibase.properties
 src/main/resources/liquibase-init-db.properties
+
+*.example
