@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        This changeset creates the "tables" meta-table.
+        It serves as a registry of all tables in your database —
+        a self-documenting catalog that tracks what each table is for.
+
+        This is an example of a real-world pattern from enterprise projects.
+    -->
+    <changeSet id="001-create-tables-table" author="template">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="tables"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="tables">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="db_" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="type" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="service" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="column_count" type="SMALLINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="DATETIME" defaultValueComputed="GETDATE()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_update_at" type="DATETIME" defaultValueComputed="NULL"/>
+        </createTable>
+
+        <createIndex tableName="tables" indexName="idx_tables_name">
+            <column name="name"/>
+        </createIndex>
+
+        <!-- ================================================================ -->
+        <!-- SYSTEM REGISTRATION — DO NOT MODIFY                              -->
+        <!-- This block registers the table in the metadata registry.         -->
+        <!-- Copy this pattern when creating your own tables.                 -->
+        <!-- ================================================================ -->
+        <sql>
+            INSERT INTO dbo.tables (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES ('liquibase_lab', 'tables', 'SYSTEM', 'template', 1, NULL,
+                    'Metadata registry of all tables in the database.',
+                    (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('tables')),
+                    SYSUTCDATETIME(), NULL);
+        </sql>
+
+        <rollback>
+            <dropTable tableName="tables"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

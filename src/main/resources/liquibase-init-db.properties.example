@@ -1,0 +1,11 @@
+# Database Configuration — connects to 'master' to create the lab database
+url=jdbc:sqlserver://localhost:1433;databaseName=master;encrypt=true;trustServerCertificate=true;
+username=sa
+password=YourPassword123!
+driver=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+# Changelog Location — database initialization changelog
+changeLogFile=src/main/resources/db/changelogs/db-init-changelog.xml
+
+# Liquibase Settings
+logLevel=info

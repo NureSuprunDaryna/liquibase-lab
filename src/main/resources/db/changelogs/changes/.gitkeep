@@ -1,0 +1,3 @@
+<!-- This directory is for schema changes AFTER initial table creation -->
+<!-- Examples: ALTER TABLE, ADD COLUMN, RENAME COLUMN, ADD CONSTRAINT -->
+<!-- Name your files like: student-name-description-V001.xml -->

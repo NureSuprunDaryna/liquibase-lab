@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Database Initialization Changelog
+        This changelog runs against the 'master' database to create the lab database.
+        Similar to how enterprise projects provision databases before running table migrations.
+
+        Usage: mvn -Pinit-db liquibase:update
+    -->
+
+    <!-- Step 1: Create 'liquibase_lab' database if it does not exist -->
+    <changeSet id="0-create-database-if-not-exists" author="template">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mssql"/>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM sys.databases
+                WHERE name = 'liquibase_lab';
+            </sqlCheck>
+        </preConditions>
+        <comment>Create 'liquibase_lab' database if it does not exist</comment>
+
+        <sql>
+            IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'liquibase_lab')
+            BEGIN
+                CREATE DATABASE liquibase_lab COLLATE Latin1_General_100_CI_AS_SC_UTF8;
+                RAISERROR ('Database "liquibase_lab" has been created.', 10, 1) WITH NOWAIT;
+            END
+            ELSE
+            BEGIN
+                RAISERROR ('Database "liquibase_lab" already exists.', 10, 1) WITH NOWAIT;
+            END
+        </sql>
+    </changeSet>
+
+    <!-- Step 2: Create database user for the lab (optional, if not using 'sa') -->
+    <changeSet id="1-create-lab-user-if-not-exists" author="template">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mssql"/>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM sys.sql_logins
+                WHERE name = 'lab_user';
+            </sqlCheck>
+        </preConditions>
+        <comment>Create login 'lab_user' for students who don't want to use 'sa'</comment>
+
+        <sql>
+            IF NOT EXISTS (SELECT 1 FROM sys.sql_logins WHERE name = 'lab_user')
+            BEGIN
+                CREATE LOGIN lab_user WITH PASSWORD = 'LabPassword123!';
+            END
+        </sql>
+    </changeSet>
+
+    <!-- Step 3: Create database user and assign roles -->
+    <changeSet id="2-assign-user-roles" author="template">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mssql"/>
+        </preConditions>
+        <comment>Create user in liquibase_lab database and assign read/write/ddl roles</comment>
+
+        <sql>
+            USE liquibase_lab;
+
+            IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name = 'lab_user')
+            BEGIN
+                CREATE USER lab_user FOR LOGIN lab_user;
+            END
+
+            -- Assign roles for full lab access
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.database_role_members drm
+                JOIN sys.database_principals r ON drm.role_principal_id = r.principal_id
+                JOIN sys.database_principals u ON drm.member_principal_id = u.principal_id
+                WHERE r.name = 'db_datareader' AND u.name = 'lab_user'
+            )
+            BEGIN
+                EXEC sp_addrolemember 'db_datareader', 'lab_user';
+            END
+
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.database_role_members drm
+                JOIN sys.database_principals r ON drm.role_principal_id = r.principal_id
+                JOIN sys.database_principals u ON drm.member_principal_id = u.principal_id
+                WHERE r.name = 'db_datawriter' AND u.name = 'lab_user'
+            )
+            BEGIN
+                EXEC sp_addrolemember 'db_datawriter', 'lab_user';
+            END
+
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.database_role_members drm
+                JOIN sys.database_principals r ON drm.role_principal_id = r.principal_id
+                JOIN sys.database_principals u ON drm.member_principal_id = u.principal_id
+                WHERE r.name = 'db_ddladmin' AND u.name = 'lab_user'
+            )
+            BEGIN
+                EXEC sp_addrolemember 'db_ddladmin', 'lab_user';
+            END
+
+            USE master;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

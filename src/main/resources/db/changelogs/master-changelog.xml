@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- ============================================= -->
+    <!--  INIT: Initial table creation                 -->
+    <!--  All CREATE TABLE changesets go here           -->
+    <!-- ============================================= -->
+    <include file="init/tables-init.xml" relativeToChangelogFile="true"/>
+
+
+    <!-- ============================================= -->
+    <!--  CHANGES: Schema modifications after init     -->
+    <!--  ALTER TABLE, ADD COLUMN, RENAME, etc.        -->
+    <!-- ============================================= -->
+    <!-- <include file="changes/your-change-file.xml" relativeToChangelogFile="true"/> -->
+
+
+    <!-- ============================================= -->
+    <!--  DATA: Seed data insertions                   -->
+    <!--  INSERT statements for reference data         -->
+    <!-- ============================================= -->
+    <!-- <include file="data/your-data-file.xml" relativeToChangelogFile="true"/> -->
+
+</databaseChangeLog>

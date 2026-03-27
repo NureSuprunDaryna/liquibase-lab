@@ -1,0 +1,11 @@
+# Database Configuration
+url=jdbc:sqlserver://localhost:1433;databaseName=liquibase_lab;encrypt=true;trustServerCertificate=true;
+username=sa
+password=YourPassword123!
+driver=com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+# Changelog Location
+changeLogFile=src/main/resources/db/changelogs/master-changelog.xml
+
+# Liquibase Settings
+logLevel=info
