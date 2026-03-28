@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-insert-users-seed-data-v001" author="daryna">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="users"/>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM users
+                WHERE id IN (
+                    '11111111-1111-1111-1111-111111111111',
+                    '22222222-2222-2222-2222-222222222222',
+                    '33333333-3333-3333-3333-333333333333',
+                    '44444444-4444-4444-4444-444444444444'
+                )
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="users">
+            <column name="id" value="11111111-1111-1111-1111-111111111111"/>
+            <column name="google_id" value="google-user-001"/>
+            <column name="first_name" value="Daryna"/>
+            <column name="last_name" value="Admin"/>
+            <column name="email" value="daryna.admin@example.com"/>
+            <column name="password_hash" value="$2a$10$seed_hash_001"/>
+            <column name="system_role_name" value="Admin"/>
+            <column name="registered_at" valueDate="2026-03-01T09:00:00"/>
+            <column name="google_verified" valueBoolean="true"/>
+            <column name="google_verified_at" valueDate="2026-03-01T09:05:00"/>
+            <column name="email_verified" valueBoolean="true"/>
+            <column name="two_factor_enabled" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="22222222-2222-2222-2222-222222222222"/>
+            <column name="google_id" value="google-user-002"/>
+            <column name="first_name" value="Alyona"/>
+            <column name="last_name" value="Volunteer"/>
+            <column name="email" value="alyona.volunteer@example.com"/>
+            <column name="password_hash" value="$2a$10$seed_hash_002"/>
+            <column name="system_role_name" value="User"/>
+            <column name="registered_at" valueDate="2026-03-02T10:00:00"/>
+            <column name="google_verified" valueBoolean="false"/>
+            <column name="email_verified" valueBoolean="true"/>
+            <column name="two_factor_enabled" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="33333333-3333-3333-3333-333333333333"/>
+            <column name="google_id" value="google-user-003"/>
+            <column name="first_name" value="Mykyta"/>
+            <column name="last_name" value="Volunteer"/>
+            <column name="email" value="mykyta.volunteer@example.com"/>
+            <column name="password_hash" value="$2a$10$seed_hash_003"/>
+            <column name="system_role_name" value="User"/>
+            <column name="registered_at" valueDate="2026-03-03T11:00:00"/>
+            <column name="google_verified" valueBoolean="false"/>
+            <column name="email_verified" valueBoolean="true"/>
+            <column name="two_factor_enabled" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="users">
+            <column name="id" value="44444444-4444-4444-4444-444444444444"/>
+            <column name="google_id" value="google-user-004"/>
+            <column name="first_name" value="Danylo"/>
+            <column name="last_name" value="Volunteer"/>
+            <column name="email" value="danylo.volunteer@example.com"/>
+            <column name="password_hash" value="$2a$10$seed_hash_004"/>
+            <column name="system_role_name" value="User"/>
+            <column name="registered_at" valueDate="2026-03-04T12:00:00"/>
+            <column name="google_verified" valueBoolean="false"/>
+            <column name="email_verified" valueBoolean="true"/>
+            <column name="two_factor_enabled" valueBoolean="false"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="users">
+                <where>id IN (
+                    '11111111-1111-1111-1111-111111111111',
+                    '22222222-2222-2222-2222-222222222222',
+                    '33333333-3333-3333-3333-333333333333',
+                    '44444444-4444-4444-4444-444444444444'
+                )</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
