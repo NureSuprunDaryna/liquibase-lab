@@ -136,18 +136,20 @@ Indexes:
 
 ### 3. `skills` — owner: Alyona
 
-Purpose: stores reusable skill definitions.
+Purpose: stores user skills. One user can have many skills.
 
 | Column | Type | Null | Notes |
 |---|---|---|---|
 | id | UNIQUEIDENTIFIER | no | PK |
-| name | NVARCHAR(150) | no | unique |
+| user_id | UNIQUEIDENTIFIER | no | FK -> `users.id` |
+| name | NVARCHAR(150) | no | |
 | description | NVARCHAR(1000) | yes | |
 | icon_url | NVARCHAR(500) | yes | |
 
 Indexes:
 - `pk_skills`
-- `ux_skills_name` on `(name)`
+- `ix_skills_user_id` on `(user_id)`
+- `ux_skills_user_id_name` on `(user_id, name)`
 
 ### 4. `projects` — owner: Alyona
 
