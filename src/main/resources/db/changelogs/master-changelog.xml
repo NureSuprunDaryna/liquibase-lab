@@ -14,6 +14,8 @@
     <include file="init/organizations-init.xml" relativeToChangelogFile="true"/>
     <include file="init/skills-init.xml" relativeToChangelogFile="true"/>
     <include file="init/projects-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/context-roles-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/participations-init.xml" relativeToChangelogFile="true"/>
 
 
     <!-- ============================================= -->
@@ -31,5 +33,7 @@
     <include file="data/organizations-data-v001.xml" relativeToChangelogFile="true"/>
     <include file="data/skills-data-v003.xml" relativeToChangelogFile="true"/>
     <include file="data/projects-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/context-roles-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/participations-data-v001.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
