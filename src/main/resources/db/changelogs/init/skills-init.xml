@@ -39,4 +39,37 @@
         </rollback>
     </changeSet>
 
+    <changeSet id="002-add-user-to-skills" author="alyona">
+        <preConditions onFail="HALT">
+            <tableExists tableName="skills"/>
+            <tableExists tableName="users"/>
+            <not>
+                <columnExists tableName="skills" columnName="user_id"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="skills">
+            <column name="user_id" type="UNIQUEIDENTIFIER"/>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="skills"
+                baseColumnNames="user_id"
+                constraintName="fk_skills_user"
+                referencedTableName="users"
+                referencedColumnNames="id"/>
+
+        <createIndex tableName="skills" indexName="idx_skills_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="skills"
+                    constraintName="fk_skills_user"/>
+            <dropIndex tableName="skills" indexName="idx_skills_user_id"/>
+            <dropColumn tableName="skills" columnName="user_id"/>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>
