@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="001-create-skills-table" author="alyona">
+        <createTable tableName="skills">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="description" type="VARCHAR(500)"/>
+        </createTable>
+
+        <createIndex tableName="skills" indexName="idx_skills_name">
+            <column name="name"/>
+        </createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables
+            (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES
+                ('liquibase_lab', 'skills', 'DATA_TABLE', 'alyona', 1, 'PROJECT_SERVICE',
+                 'Table for storing skills.',
+                 (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('skills')),
+                 SYSUTCDATETIME(), NULL);
+        </sql>
+
+        <rollback>
+            <sql>DELETE FROM dbo.tables WHERE name = 'skills';</sql>
+            <dropTable tableName="skills"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

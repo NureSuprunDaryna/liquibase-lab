@@ -10,9 +10,10 @@
     <!--  All CREATE TABLE changesets go here           -->
     <!-- ============================================= -->
     <include file="init/tables-init.xml" relativeToChangelogFile="true"/>
-	<include file="init/users-init.xml" relativeToChangelogFile="true"/>
-	<include file="init/organizations-init.xml" relativeToChangelogFile="true"/>
-
+    <include file="init/users-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/organizations-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/skills-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/projects-init.xml" relativeToChangelogFile="true"/>
 
     <!-- ============================================= -->
     <!--  CHANGES: Schema modifications after init     -->
@@ -20,13 +21,12 @@
     <!-- ============================================= -->
     <!-- <include file="changes/your-change-file.xml" relativeToChangelogFile="true"/> -->
 
-
     <!-- ============================================= -->
     <!--  DATA: Seed data insertions                   -->
     <!--  INSERT statements for reference data         -->
     <!-- ============================================= -->
     <!-- <include file="data/your-data-file.xml" relativeToChangelogFile="true"/> -->
-	<include file="data/users-data-v001.xml" relativeToChangelogFile="true"/>
-	<include file="data/organizations-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/users-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/organizations-data-v001.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
