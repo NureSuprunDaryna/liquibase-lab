@@ -10,6 +10,8 @@
     <!--  All CREATE TABLE changesets go here           -->
     <!-- ============================================= -->
     <include file="init/tables-init.xml" relativeToChangelogFile="true"/>
+	<include file="init/users-init.xml" relativeToChangelogFile="true"/>
+	<include file="init/organizations-init.xml" relativeToChangelogFile="true"/>
 
 
     <!-- ============================================= -->
