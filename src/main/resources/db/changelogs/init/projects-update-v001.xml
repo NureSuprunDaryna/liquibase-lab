@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="002-fix-projects-organization-fk" author="alyona">
+
+        <preConditions onFail="HALT">
+            <tableExists tableName="projects"/>
+            <columnExists tableName="projects" columnName="organization_id"/>
+        </preConditions>
+
+        <dropColumn tableName="projects" columnName="organization_id"/>
+
+        <addColumn tableName="projects">
+            <column name="organization_id" type="UNIQUEIDENTIFIER"/>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="projects"
+                baseColumnNames="organization_id"
+                constraintName="fk_projects_organization"
+                referencedTableName="organizations"
+                referencedColumnNames="id"/>
+
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="projects"
+                    constraintName="fk_projects_organization"/>
+
+            <dropColumn tableName="projects" columnName="organization_id"/>
+
+            <addColumn tableName="projects">
+                <column name="organization_id" type="BIGINT"/>
+            </addColumn>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-insert-projects-seed-data-v001" author="alyona">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="projects"/>
+            <tableExists tableName="organizations"/>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM projects
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="projects">
+            <column name="name" value="Helping Hands Platform"/>
+            <column name="description" value="Volunteer coordination system"/>
+            <column name="organization_id" value="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"/>
+        </insert>
+
+        <insert tableName="projects">
+            <column name="name" value="Green Future Initiative"/>
+            <column name="description" value="Environmental awareness platform"/>
+            <column name="organization_id" value="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"/>
+        </insert>
+
+        <insert tableName="projects">
+            <column name="name" value="Shelter Support System"/>
+            <column name="description" value="Support system for displaced families"/>
+            <column name="organization_id" value="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="projects">
+                <where>name IN ('Helping Hands Platform', 'Green Future Initiative', 'Shelter Support System')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
