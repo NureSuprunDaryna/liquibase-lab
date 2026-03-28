@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-users-table" author="daryna">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="users"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="users">
+            <column name="id" type="UNIQUEIDENTIFIER" defaultValueComputed="NEWID()">
+                <constraints primaryKey="true" primaryKeyName="pk_users" nullable="false"/>
+            </column>
+
+            <column name="google_id" type="NVARCHAR(100)"/>
+
+            <column name="first_name" type="NVARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="last_name" type="NVARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="email" type="NVARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="password_hash" type="NVARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="system_role_name" type="NVARCHAR(50)" defaultValue="User">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="registered_at" type="DATETIME2" defaultValueComputed="SYSUTCDATETIME()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="google_verified" type="BIT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="google_verified_at" type="DATETIME2"/>
+
+            <column name="email_verified" type="BIT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="two_factor_enabled" type="BIT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="users" indexName="ux_users_email" unique="true">
+            <column name="email"/>
+        </createIndex>
+
+        <createIndex tableName="users" indexName="ix_users_system_role_name_registered_at">
+            <column name="system_role_name"/>
+            <column name="registered_at"/>
+        </createIndex>
+
+        <createIndex tableName="users" indexName="ix_users_last_name_first_name">
+            <column name="last_name"/>
+            <column name="first_name"/>
+        </createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES (
+                'liquibase_lab',
+                'users',
+                'DATA_TABLE',
+                'daryna',
+                1,
+                'identity_service',
+                'Stores platform users.',
+                (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('users')),
+                SYSUTCDATETIME(),
+                NULL
+            );
+        </sql>
+
+        <rollback>
+            <sql>DELETE FROM dbo.tables WHERE name = 'users';</sql>
+            <dropTable tableName="users"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

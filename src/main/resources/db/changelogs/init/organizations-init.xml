@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-organizations-table" author="daryna">
+        <preConditions onFail="HALT">
+            <tableExists tableName="users"/>
+            <not>
+                <tableExists tableName="organizations"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="organizations">
+            <column name="id" type="UNIQUEIDENTIFIER" defaultValueComputed="NEWID()">
+                <constraints primaryKey="true" primaryKeyName="pk_organizations" nullable="false"/>
+            </column>
+
+            <column name="name" type="NVARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="NVARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="owner_id" type="UNIQUEIDENTIFIER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="DATETIME2" defaultValueComputed="SYSUTCDATETIME()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="launch_date" type="DATETIME2"/>
+
+            <column name="is_archived" type="BIT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="logo_url" type="NVARCHAR(500)"/>
+            <column name="phone_number" type="NVARCHAR(50)"/>
+            <column name="latitude" type="DECIMAL(9,6)"/>
+            <column name="longitude" type="DECIMAL(9,6)"/>
+
+            <column name="join_policy" type="NVARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="leave_policy" type="NVARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_organizations_users"
+                baseTableName="organizations"
+                baseColumnNames="owner_id"
+                referencedTableName="users"
+                referencedColumnNames="id"/>
+
+        <createIndex tableName="organizations" indexName="ix_organizations_owner_id">
+            <column name="owner_id"/>
+        </createIndex>
+
+        <createIndex tableName="organizations" indexName="ix_organizations_is_archived_created_at">
+            <column name="is_archived"/>
+            <column name="created_at"/>
+        </createIndex>
+
+        <createIndex tableName="organizations" indexName="ix_organizations_name">
+            <column name="name"/>
+        </createIndex>
+
+        <createIndex tableName="organizations" indexName="ix_organizations_latitude_longitude">
+            <column name="latitude"/>
+            <column name="longitude"/>
+        </createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES (
+                'liquibase_lab',
+                'organizations',
+                'DATA_TABLE',
+                'daryna',
+                1,
+                'organization_service',
+                'Stores volunteer organizations.',
+                (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('organizations')),
+                SYSUTCDATETIME(),
+                NULL
+            );
+        </sql>
+
+        <rollback>
+            <sql>DELETE FROM dbo.tables WHERE name = 'organizations';</sql>
+            <dropTable tableName="organizations"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
