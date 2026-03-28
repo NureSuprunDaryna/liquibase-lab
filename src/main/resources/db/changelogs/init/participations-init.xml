@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-participations-table" author="danylo">
+        <createTable tableName="participations">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="user_id" type="UNIQUEIDENTIFIER">
+                <constraints nullable="false"
+                             foreignKeyName="fk_participations_user"
+                             referencedTableName="users"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="context_role_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_participations_context_role"
+                             referencedTableName="context_roles"
+                             referencedColumnNames="id"/>
+            </column>
+
+            <column name="joined_at" type="DATETIME2"/>
+            <column name="is_active" type="BIT" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="participations" indexName="idx_participations_user_id">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="participations" indexName="idx_participations_context_role_id">
+            <column name="context_role_id"/>
+        </createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables
+            (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES
+                ('liquibase_lab', 'participations', 'DATA_TABLE', 'danylo', 1, 'PROJECT_SERVICE',
+                 'Table for storing user participations in context roles.',
+                 (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('participations')),
+                 SYSUTCDATETIME(), NULL);
+        </sql>
+
+        <rollback>
+            <sql>DELETE FROM dbo.tables WHERE name = 'participations';</sql>
+            <dropTable tableName="participations"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
