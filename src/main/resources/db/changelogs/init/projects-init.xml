@@ -2,24 +2,26 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="
-            http://www.liquibase.org/xml/ns/dbchangelog
-            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="002-create-projects-table" author="alyona">
+    <changeSet id="001-create-projects-table" author="alyona">
         <createTable tableName="projects">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
             <column name="name" type="VARCHAR(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
 
             <column name="description" type="VARCHAR(500)"/>
 
-            <column name="organization_id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="organization_id" type="UNIQUEIDENTIFIER">
+                <constraints nullable="false"
+                             foreignKeyName="fk_projects_organization"
+                             referencedTableName="organizations"
+                             referencedColumnNames="id"/>
             </column>
         </createTable>
 

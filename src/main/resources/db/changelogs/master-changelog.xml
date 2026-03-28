@@ -15,6 +15,7 @@
     <include file="init/skills-init.xml" relativeToChangelogFile="true"/>
     <include file="init/projects-init.xml" relativeToChangelogFile="true"/>
 
+
     <!-- ============================================= -->
     <!--  CHANGES: Schema modifications after init     -->
     <!--  ALTER TABLE, ADD COLUMN, RENAME, etc.        -->
@@ -28,5 +29,7 @@
     <!-- <include file="data/your-data-file.xml" relativeToChangelogFile="true"/> -->
     <include file="data/users-data-v001.xml" relativeToChangelogFile="true"/>
     <include file="data/organizations-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/skills-data-v003.xml" relativeToChangelogFile="true"/>
+    <include file="data/projects-data-v001.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
