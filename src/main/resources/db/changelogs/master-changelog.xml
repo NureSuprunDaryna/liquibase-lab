@@ -16,6 +16,8 @@
     <include file="init/projects-init.xml" relativeToChangelogFile="true"/>
     <include file="init/context-roles-init.xml" relativeToChangelogFile="true"/>
     <include file="init/participations-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/events-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/project-tasks-init.xml" relativeToChangelogFile="true"/>
 
 
     <!-- ============================================= -->

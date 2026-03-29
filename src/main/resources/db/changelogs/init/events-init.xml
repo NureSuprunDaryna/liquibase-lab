@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-events-table" author="mykyta">
+
+        <createTable tableName="events">
+
+            <column name="id" type="UNIQUEIDENTIFIER">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="organization_id" type="UNIQUEIDENTIFIER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="project_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="title" type="NVARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="NVARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="start_at" type="DATETIME2">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="end_at" type="DATETIME2">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="type" type="NVARCHAR(100)"/>
+
+            <column name="latitude" type="DECIMAL(9,6)"/>
+
+            <column name="longitude" type="DECIMAL(9,6)"/>
+
+            <column name="is_cancelled" type="BIT" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="cancelled_at" type="DATETIME2"/>
+
+            <column name="cancelled_by" type="UNIQUEIDENTIFIER"/>
+
+            <column name="cancel_reason" type="NVARCHAR(1000)"/>
+
+            <column name="created_at" type="DATETIME2" defaultValueComputed="SYSUTCDATETIME()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="DATETIME2"/>
+
+            <column name="join_policy" type="NVARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="leave_policy" type="NVARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="series_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="master_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="is_series_master" type="BIT" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="occurrence_index" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+
+        <!-- Foreign Keys -->
+
+        <addForeignKeyConstraint
+                baseTableName="events"
+                baseColumnNames="organization_id"
+                referencedTableName="organizations"
+                referencedColumnNames="id"
+                constraintName="fk_events_organization"/>
+
+        <addForeignKeyConstraint
+                baseTableName="events"
+                baseColumnNames="project_id"
+                referencedTableName="projects"
+                referencedColumnNames="id"
+                constraintName="fk_events_project"/>
+
+        <addForeignKeyConstraint
+                baseTableName="events"
+                baseColumnNames="cancelled_by"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                constraintName="fk_events_cancelled_by"/>
+
+
+        <!-- Indexes -->
+
+        <createIndex tableName="events" indexName="ix_events_organization_id_start_at">
+            <column name="organization_id"/>
+            <column name="start_at"/>
+        </createIndex>
+
+        <createIndex tableName="events" indexName="ix_events_project_id_start_at">
+            <column name="project_id"/>
+            <column name="start_at"/>
+        </createIndex>
+
+        <createIndex tableName="events" indexName="ix_events_is_cancelled_start_at">
+            <column name="is_cancelled"/>
+            <column name="start_at"/>
+        </createIndex>
+
+        <createIndex tableName="events" indexName="ix_events_series_id_occurrence_index">
+            <column name="series_id"/>
+            <column name="occurrence_index"/>
+        </createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables
+            (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES
+                ('liquibase_lab', 'events', 'DATA_TABLE', 'mykyta', 1, 'PROJECT_SERVICE',
+                 'Table for storing organization or project level events.',
+                 (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('events')),
+                 SYSUTCDATETIME(), NULL);
+        </sql>
+
+
+        <rollback>
+
+            <sql>DELETE FROM dbo.tables WHERE name = 'events';</sql>
+
+            <dropTable tableName="events"/>
+
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
