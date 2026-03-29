@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-organizations-projects-counter-trigger-v001" author="daryna">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="organizations"/>
+            <tableExists tableName="projects"/>
+        </preConditions>
+
+        <sql splitStatements="false">
+            CREATE OR ALTER TRIGGER trg_projects_sync_organization_active_projects_count
+            ON projects
+            AFTER INSERT, UPDATE, DELETE
+            AS
+            BEGIN
+                SET NOCOUNT ON;
+
+                DECLARE @affected_organizations TABLE (
+                    organization_id UNIQUEIDENTIFIER PRIMARY KEY
+                );
+
+                INSERT INTO @affected_organizations (organization_id)
+                SELECT DISTINCT organization_id
+                FROM inserted
+                WHERE organization_id IS NOT NULL
+
+                UNION
+
+                SELECT DISTINCT organization_id
+                FROM deleted
+                WHERE organization_id IS NOT NULL;
+
+                UPDATE o
+                SET active_projects_count = ISNULL(x.project_count, 0)
+                FROM organizations o
+                INNER JOIN @affected_organizations ao
+                    ON ao.organization_id = o.id
+                LEFT JOIN (
+                    SELECT p.organization_id, COUNT(*) AS project_count
+                    FROM projects p
+                    GROUP BY p.organization_id
+                ) x
+                    ON x.organization_id = o.id;
+            END;
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TRIGGER IF EXISTS trg_projects_sync_organization_active_projects_count;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="002-create-organizations-events-counter-trigger-v001" author="daryna">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="organizations"/>
+            <tableExists tableName="events"/>
+        </preConditions>
+
+        <sql splitStatements="false">
+            CREATE OR ALTER TRIGGER trg_events_sync_organization_active_events_count
+            ON events
+            AFTER INSERT, UPDATE, DELETE
+            AS
+            BEGIN
+                SET NOCOUNT ON;
+
+                DECLARE @affected_organizations TABLE (
+                    organization_id UNIQUEIDENTIFIER PRIMARY KEY
+                );
+
+                INSERT INTO @affected_organizations (organization_id)
+                SELECT DISTINCT organization_id
+                FROM inserted
+                WHERE organization_id IS NOT NULL
+
+                UNION
+
+                SELECT DISTINCT organization_id
+                FROM deleted
+                WHERE organization_id IS NOT NULL;
+
+                UPDATE o
+                SET active_events_count = ISNULL(x.event_count, 0)
+                FROM organizations o
+                INNER JOIN @affected_organizations ao
+                    ON ao.organization_id = o.id
+                LEFT JOIN (
+                    SELECT e.organization_id, COUNT(*) AS event_count
+                    FROM events e
+                    WHERE e.is_cancelled = 0
+                    GROUP BY e.organization_id
+                ) x
+                    ON x.organization_id = o.id;
+            END;
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TRIGGER IF EXISTS trg_events_sync_organization_active_events_count;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
