@@ -32,6 +32,8 @@
     <!--  TRIGGERS: Derived data synchronization       -->
     <!-- ============================================= -->
     <include file="triggers/organizations-counters-triggers-v001.xml" relativeToChangelogFile="true"/>
+    <include file="triggers/projects-triggers-v001.xml" relativeToChangelogFile="true"/>
+    <include file="triggers/project-events-triggers-v002.xml" relativeToChangelogFile="true"/>
 
     <!-- ============================================= -->
     <!--  DATA: Seed data insertions                   -->

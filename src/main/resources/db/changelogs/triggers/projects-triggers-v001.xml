@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-project-tasks-counter-trigger" author="alyona">
+
+        <sql>
+            CREATE OR ALTER TRIGGER trg_project_tasks_counter
+            ON project_tasks
+            AFTER INSERT, UPDATE, DELETE
+                AS
+            BEGIN
+                SET NOCOUNT ON;
+
+            UPDATE p
+            SET active_tasks_count = (
+                SELECT COUNT(*)
+                FROM project_tasks pt
+                WHERE pt.project_id = p.id
+                  AND pt.status != 'DONE'
+                )
+            FROM projects p
+            WHERE p.id IN (
+                SELECT project_id FROM inserted
+                UNION
+                SELECT project_id FROM deleted
+                );
+            END;
+        </sql>
+
+        <rollback>
+            DROP TRIGGER trg_project_tasks_counter;
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
