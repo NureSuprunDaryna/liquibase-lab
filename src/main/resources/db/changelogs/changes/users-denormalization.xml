@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-add-users-denormalization-column" author="danylo">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="users"/>
+            <not>
+                <columnExists tableName="users" columnName="active_participations_count"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="users">
+            <column name="active_participations_count" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="users" columnName="active_participations_count"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="002-add-context-roles-denormalization-column" author="danylo">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="context_roles"/>
+            <not>
+                <columnExists tableName="context_roles" columnName="active_members_count"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="context_roles">
+            <column name="active_members_count" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="context_roles" columnName="active_members_count"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="003-backfill-users-active-participations-count" author="danylo">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="users"/>
+            <tableExists tableName="participations"/>
+            <columnExists tableName="users" columnName="active_participations_count"/>
+        </preConditions>
+
+        <sql>
+            UPDATE u
+            SET active_participations_count = (
+                SELECT COUNT(*)
+                FROM participations p
+                WHERE p.user_id = u.id
+                  AND p.is_active = 1
+            )
+                FROM users u;
+        </sql>
+
+        <rollback>
+            UPDATE users
+            SET active_participations_count = 0;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="004-backfill-context-roles-active-members-count" author="danylo">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="context_roles"/>
+            <tableExists tableName="participations"/>
+            <columnExists tableName="context_roles" columnName="active_members_count"/>
+        </preConditions>
+
+        <sql>
+            UPDATE cr
+            SET active_members_count = (
+                SELECT COUNT(*)
+                FROM participations p
+                WHERE p.context_role_id = cr.id
+                  AND p.is_active = 1
+            )
+                FROM context_roles cr;
+        </sql>
+
+        <rollback>
+            UPDATE context_roles
+            SET active_members_count = 0;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
