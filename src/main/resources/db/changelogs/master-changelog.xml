@@ -46,5 +46,7 @@
     <include file="data/projects-data-v001.xml" relativeToChangelogFile="true"/>
     <include file="data/context-roles-data-v001.xml" relativeToChangelogFile="true"/>
     <include file="data/participations-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/events-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/project-tasks-data-v001.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
