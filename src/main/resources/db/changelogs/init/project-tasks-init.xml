@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="002-create-project-tasks-table" author="mykyta">
+
+        <createTable tableName="project_tasks">
+
+            <column name="id" type="UNIQUEIDENTIFIER">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="organization_id" type="UNIQUEIDENTIFIER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="project_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="event_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="title" type="NVARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="NVARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="start_at" type="DATETIME2">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="end_at" type="DATETIME2">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="NVARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="points" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="assigned_to_user_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="join_policy" type="NVARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="leave_policy" type="NVARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="board_order" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="started_at" type="DATETIME2"/>
+
+            <column name="started_by_user_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="completed_at" type="DATETIME2"/>
+
+            <column name="completed_by_user_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="last_status_changed_at" type="DATETIME2"/>
+
+            <column name="last_status_changed_by_user_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="series_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="master_id" type="UNIQUEIDENTIFIER"/>
+
+            <column name="is_series_master" type="BIT" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="occurrence_index" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+
+        <!-- Foreign Keys -->
+
+        <addForeignKeyConstraint
+                baseTableName="project_tasks"
+                baseColumnNames="organization_id"
+                referencedTableName="organizations"
+                referencedColumnNames="id"
+                constraintName="fk_project_tasks_organization"/>
+
+        <addForeignKeyConstraint
+                baseTableName="project_tasks"
+                baseColumnNames="project_id"
+                referencedTableName="projects"
+                referencedColumnNames="id"
+                constraintName="fk_project_tasks_project"/>
+
+        <addForeignKeyConstraint
+                baseTableName="project_tasks"
+                baseColumnNames="event_id"
+                referencedTableName="events"
+                referencedColumnNames="id"
+                constraintName="fk_project_tasks_event"/>
+
+        <addForeignKeyConstraint
+                baseTableName="project_tasks"
+                baseColumnNames="assigned_to_user_id"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                constraintName="fk_project_tasks_assigned_user"/>
+
+
+        <!-- Indexes -->
+
+        <createIndex tableName="project_tasks" indexName="ix_project_tasks_project_id_status_start_at">
+            <column name="project_id"/>
+            <column name="status"/>
+            <column name="start_at"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="ix_project_tasks_event_id_status_start_at">
+            <column name="event_id"/>
+            <column name="status"/>
+            <column name="start_at"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="ix_project_tasks_assigned_to_user_id_status">
+            <column name="assigned_to_user_id"/>
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="ix_project_tasks_organization_id_status">
+            <column name="organization_id"/>
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="project_tasks" indexName="ix_project_tasks_series_id_occurrence_index">
+            <column name="series_id"/>
+            <column name="occurrence_index"/>
+        </createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables
+            (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES
+                ('liquibase_lab', 'project_tasks', 'DATA_TABLE', 'mykyta', 1, 'PROJECT_SERVICE',
+                 'Table for storing project or event related tasks.',
+                 (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('project_tasks')),
+                 SYSUTCDATETIME(), NULL);
+        </sql>
+
+        <rollback>
+
+            <sql>DELETE FROM dbo.tables WHERE name = 'project_tasks';</sql>
+
+            <dropTable tableName="project_tasks"/>
+
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>
