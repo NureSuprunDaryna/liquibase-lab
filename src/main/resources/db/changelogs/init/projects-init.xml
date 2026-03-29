@@ -7,7 +7,8 @@
 
     <changeSet id="001-create-projects-table" author="alyona">
         <createTable tableName="projects">
-            <column name="id" type="BIGINT" autoIncrement="true">
+		
+            <column name="id" type="UNIQUEIDENTIFIER">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
