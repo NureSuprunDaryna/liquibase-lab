@@ -26,7 +26,7 @@
     <!-- ============================================= -->
     <!-- <include file="changes/your-change-file.xml" relativeToChangelogFile="true"/> -->
 	<include file="changes/organizations-denorm-v001.xml" relativeToChangelogFile="true"/>
-
+    <include file="changes/projects-denormalization-v001.xml" relativeToChangelogFile="true"/>
     <!-- ============================================= -->
     <!--  DATA: Seed data insertions                   -->
     <!--  INSERT statements for reference data         -->
