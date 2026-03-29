@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-context-roles-table" author="danylo">
+        <createTable tableName="context_roles">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="description" type="VARCHAR(500)"/>
+        </createTable>
+
+        <createIndex tableName="context_roles" indexName="idx_context_roles_name">
+            <column name="name"/>
+        </createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables
+            (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES
+                ('liquibase_lab', 'context_roles', 'DATA_TABLE', 'danylo', 1, 'PROJECT_SERVICE',
+                 'Table for storing context roles.',
+                 (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('context_roles')),
+                 SYSUTCDATETIME(), NULL);
+        </sql>
+
+        <rollback>
+            <sql>DELETE FROM dbo.tables WHERE name = 'context_roles';</sql>
+            <dropTable tableName="context_roles"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

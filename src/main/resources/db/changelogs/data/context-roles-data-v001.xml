@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-insert-context-roles-seed-data-v001" author="danylo">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="context_roles"/>
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM context_roles
+            </sqlCheck>
+        </preConditions>
+
+        <insert tableName="context_roles">
+            <column name="name" value="Coordinator"/>
+            <column name="description" value="Responsible for organizing and supervising activities"/>
+        </insert>
+
+        <insert tableName="context_roles">
+            <column name="name" value="Volunteer"/>
+            <column name="description" value="Participates in project and organization activities"/>
+        </insert>
+
+        <insert tableName="context_roles">
+            <column name="name" value="Mentor"/>
+            <column name="description" value="Supports and guides participants in activities"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="context_roles">
+                <where>name IN ('Coordinator', 'Volunteer', 'Mentor')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

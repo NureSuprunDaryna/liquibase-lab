@@ -10,6 +10,14 @@
     <!--  All CREATE TABLE changesets go here           -->
     <!-- ============================================= -->
     <include file="init/tables-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/users-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/organizations-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/skills-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/projects-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/context-roles-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/participations-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/events-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/project-tasks-init.xml" relativeToChangelogFile="true"/>
 
 
     <!-- ============================================= -->
@@ -17,12 +25,28 @@
     <!--  ALTER TABLE, ADD COLUMN, RENAME, etc.        -->
     <!-- ============================================= -->
     <!-- <include file="changes/your-change-file.xml" relativeToChangelogFile="true"/> -->
-
-
+	  <include file="changes/organizations-denorm-v001.xml" relativeToChangelogFile="true"/>
+    <include file="changes/projects-denormalization-v001.xml" relativeToChangelogFile="true"/>
+    <include file="changes/users-denormalization.xml" relativeToChangelogFile="true"/>
+	  <!-- ============================================= -->
+    <!--  TRIGGERS: Derived data synchronization       -->
+    <!-- ============================================= -->
+    <include file="triggers/organizations-counters-triggers-v001.xml" relativeToChangelogFile="true"/>
+    <include file="triggers/projects-triggers-v001.xml" relativeToChangelogFile="true"/>
+    <include file="triggers/project-events-triggers-v002.xml" relativeToChangelogFile="true"/>
+    <include file="triggers/users_triggers.xml" relativeToChangelogFile="true"/>
     <!-- ============================================= -->
     <!--  DATA: Seed data insertions                   -->
     <!--  INSERT statements for reference data         -->
     <!-- ============================================= -->
     <!-- <include file="data/your-data-file.xml" relativeToChangelogFile="true"/> -->
+    <include file="data/users-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/organizations-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/skills-data-v003.xml" relativeToChangelogFile="true"/>
+    <include file="data/projects-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/context-roles-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/participations-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/events-data-v001.xml" relativeToChangelogFile="true"/>
+    <include file="data/project-tasks-data-v001.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

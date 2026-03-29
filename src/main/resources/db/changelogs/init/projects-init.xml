@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-projects-table" author="alyona">
+        <createTable tableName="projects">
+		
+            <column name="id" type="UNIQUEIDENTIFIER">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="description" type="VARCHAR(500)"/>
+
+            <column name="organization_id" type="UNIQUEIDENTIFIER">
+                <constraints nullable="false"
+                             foreignKeyName="fk_projects_organization"
+                             referencedTableName="organizations"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="projects" indexName="idx_projects_organization_id">
+            <column name="organization_id"/>
+        </createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables
+            (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES
+                ('liquibase_lab', 'projects', 'DATA_TABLE', 'alyona', 1, 'PROJECT_SERVICE',
+                 'Table for storing projects.',
+                 (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('projects')),
+                 SYSUTCDATETIME(), NULL);
+        </sql>
+
+        <rollback>
+            <sql>DELETE FROM dbo.tables WHERE name = 'projects';</sql>
+            <dropTable tableName="projects"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

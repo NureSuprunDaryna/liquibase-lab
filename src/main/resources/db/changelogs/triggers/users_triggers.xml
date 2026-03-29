@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-users-participations-trigger" author="danylo">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="participations"/>
+            <tableExists tableName="users"/>
+            <columnExists tableName="users" columnName="active_participations_count"/>
+        </preConditions>
+
+        <sql>
+            CREATE OR ALTER TRIGGER trg_users_participations_counter
+            ON participations
+            AFTER INSERT, UPDATE, DELETE
+                AS
+            BEGIN
+                SET NOCOUNT ON;
+
+            UPDATE u
+            SET active_participations_count = (
+                SELECT COUNT(*)
+                FROM participations p
+                WHERE p.user_id = u.id
+                  AND p.is_active = 1
+            )
+                FROM users u
+            WHERE u.id IN (
+                SELECT user_id FROM inserted WHERE user_id IS NOT NULL
+                UNION
+                SELECT user_id FROM deleted WHERE user_id IS NOT NULL
+                );
+            END;
+        </sql>
+
+        <rollback>
+            DROP TRIGGER trg_users_participations_counter;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="002-context-roles-participations-trigger" author="danylo">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="participations"/>
+            <tableExists tableName="context_roles"/>
+            <columnExists tableName="context_roles" columnName="active_members_count"/>
+        </preConditions>
+
+        <sql>
+            CREATE OR ALTER TRIGGER trg_context_roles_members_counter
+            ON participations
+            AFTER INSERT, UPDATE, DELETE
+                AS
+            BEGIN
+                SET NOCOUNT ON;
+
+            UPDATE cr
+            SET active_members_count = (
+                SELECT COUNT(*)
+                FROM participations p
+                WHERE p.context_role_id = cr.id
+                  AND p.is_active = 1
+            )
+                FROM context_roles cr
+            WHERE cr.id IN (
+                SELECT context_role_id FROM inserted WHERE context_role_id IS NOT NULL
+                UNION
+                SELECT context_role_id FROM deleted WHERE context_role_id IS NOT NULL
+                );
+            END;
+        </sql>
+
+        <rollback>
+            DROP TRIGGER trg_context_roles_members_counter;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
