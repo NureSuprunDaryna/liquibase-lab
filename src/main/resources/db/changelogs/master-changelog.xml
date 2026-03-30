@@ -25,9 +25,10 @@
     <!--  ALTER TABLE, ADD COLUMN, RENAME, etc.        -->
     <!-- ============================================= -->
     <!-- <include file="changes/your-change-file.xml" relativeToChangelogFile="true"/> -->
-	  <include file="changes/organizations-denorm-v001.xml" relativeToChangelogFile="true"/>
+    <include file="changes/organizations-denorm-v001.xml" relativeToChangelogFile="true"/>
     <include file="changes/projects-denormalization-v001.xml" relativeToChangelogFile="true"/>
     <include file="changes/users-denormalization.xml" relativeToChangelogFile="true"/>
+    <include file="changes/events-denormalization-v001.xml" relativeToChangelogFile="true"/>
 	  <!-- ============================================= -->
     <!--  TRIGGERS: Derived data synchronization       -->
     <!-- ============================================= -->
@@ -35,6 +36,7 @@
     <include file="triggers/projects-triggers-v001.xml" relativeToChangelogFile="true"/>
     <include file="triggers/project-events-triggers-v002.xml" relativeToChangelogFile="true"/>
     <include file="triggers/users_triggers.xml" relativeToChangelogFile="true"/>
+    <include file="triggers/events-triggers-v001.xml" relativeToChangelogFile="true"/>
     <!-- ============================================= -->
     <!--  DATA: Seed data insertions                   -->
     <!--  INSERT statements for reference data         -->
