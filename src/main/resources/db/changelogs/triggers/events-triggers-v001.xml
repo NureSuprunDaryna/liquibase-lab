@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+	<changeSet id="007-create-event-task-counter-trigger-v001" author="danylo">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="project_tasks"/>
+			<tableExists tableName="events"/>
+		</preConditions>
+		<sql> CREATE OR ALTER TRIGGER trg_update_event_task_counters ON project_tasks AFTER INSERT, UPDATE, DELETE AS BEGIN SET NOCOUNT ON; DECLARE @affectedEvents TABLE (event_id UNIQUEIDENTIFIER); INSERT INTO @affectedEvents(event_id) SELECT DISTINCT event_id FROM inserted WHERE event_id IS NOT NULL; INSERT INTO @affectedEvents(event_id) SELECT DISTINCT event_id FROM deleted WHERE event_id IS NOT NULL; UPDATE e SET tasks_total_count = stats.total_count, tasks_completed_count = stats.completed_count FROM events e JOIN ( SELECT event_id, COUNT(*) AS total_count, SUM( CASE WHEN status = 'Completed' THEN 1 ELSE 0 END ) AS completed_count FROM project_tasks WHERE event_id IN ( SELECT DISTINCT event_id FROM @affectedEvents ) GROUP BY event_id ) stats ON e.id = stats.event_id; UPDATE events SET tasks_total_count = 0, tasks_completed_count = 0 WHERE id IN ( SELECT event_id FROM @affectedEvents ) AND id NOT IN ( SELECT DISTINCT event_id FROM project_tasks WHERE event_id IS NOT NULL ); END; </sql>
+		<rollback>
+			<sql> DROP TRIGGER IF EXISTS trg_update_event_task_counters; </sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
